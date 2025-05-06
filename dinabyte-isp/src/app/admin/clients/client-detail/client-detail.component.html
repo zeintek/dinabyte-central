@@ -1,0 +1,124 @@
+<div class="client-detail-container">
+    <div class="header">
+      <button mat-icon-button (click)="goBack()" matTooltip="Volver">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <h1>Detalles del Cliente</h1>
+      <div class="actions">
+        <button mat-icon-button color="accent" (click)="editClient()" matTooltip="Editar">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-icon-button color="warn" (click)="deleteClient()" matTooltip="Eliminar">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
+    </div>
+    
+    <div class="loading-shade" *ngIf="isLoading">
+      <mat-spinner diameter="50"></mat-spinner>
+    </div>
+    
+    <div class="error-message" *ngIf="errorMessage">
+      {{ errorMessage }}
+    </div>
+    
+    <div class="client-info" *ngIf="client && !isLoading">
+      <div class="client-header">
+        <div class="client-status">
+          <span class="status-badge" [ngClass]="{
+            'active': client.status === 'ACTIVE',
+            'suspended': client.status === 'SUSPENDED',
+            'disconnected': client.status === 'DISCONNECTED'
+          }">
+            {{ client.status === 'ACTIVE' ? 'Activo' : 
+               client.status === 'SUSPENDED' ? 'Suspendido' : 'Desconectado' }}
+          </span>
+          
+          <div class="status-actions">
+            <button *ngIf="client.status === 'ACTIVE'" mat-stroked-button color="warn" (click)="suspendClient()">
+              <mat-icon>block</mat-icon> Suspender
+            </button>
+            <button *ngIf="client.status === 'SUSPENDED'" mat-stroked-button color="primary" (click)="activateClient()">
+              <mat-icon>check_circle</mat-icon> Activar
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <mat-card>
+        <mat-card-content>
+          <div class="info-section">
+            <h2>Información Personal</h2>
+            <div class="info-grid">
+              <div class="info-item">
+                <div class="label">Nombre</div>
+                <div class="value">{{ client.name }} {{ client.lastName }}</div>
+              </div>
+              <div class="info-item">
+                <div class="label">Email</div>
+                <div class="value">{{ client.email }}</div>
+              </div>
+              <div class="info-item">
+                <div class="label">Teléfono</div>
+                <div class="value">{{ client.phone }}</div>
+              </div>
+              <div class="info-item">
+                <div class="label">Dirección</div>
+                <div class="value">{{ client.address || 'No especificada' }}</div>
+              </div>
+            </div>
+          </div>
+          
+          <mat-divider></mat-divider>
+          
+          <div class="info-section">
+            <h2>Información del Servicio</h2>
+            <div class="info-grid">
+              <div class="info-item">
+                <div class="label">Plan</div>
+                <div class="value">{{ client.servicePlan.name }}</div>
+              </div>
+              <div class="info-item">
+                <div class="label">Velocidad</div>
+                <div class="value">{{ client.servicePlan.downloadSpeed }}/{{ client.servicePlan.uploadSpeed }}</div>
+              </div>
+              <div class="info-item">
+                <div class="label">Router</div>
+                <div class="value">{{ client.router.name }}</div>
+              </div>
+              <div class="info-item">
+                <div class="label">Dirección IP</div>
+                <div class="value">{{ client.ipAddress }}</div>
+              </div>
+              <div class="info-item">
+                <div class="label">Tipo de Conexión</div>
+                <div class="value">
+                  {{ client.connectionType === 'SIMPLE_QUEUE' ? 'Simple Queue' : 
+                     client.connectionType === 'PCQ' ? 'PCQ' :
+                     client.connectionType === 'HOTSPOT' ? 'Hotspot' : 
+                     client.connectionType === 'PPPOE' ? 'PPPoE' : 
+                     client.connectionType }}
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <mat-divider></mat-divider>
+          
+          <div class="info-section">
+            <h2>Información Adicional</h2>
+            <div class="info-grid">
+              <div class="info-item">
+                <div class="label">Fecha de Registro</div>
+                <div class="value">{{ client.createdAt | date:'dd/MM/yyyy HH:mm' }}</div>
+              </div>
+              <div class="info-item">
+                <div class="label">Último Pago</div>
+                <div class="value">{{ client.lastPaymentDate ? (client.lastPaymentDate | date:'dd/MM/yyyy') : 'Sin pagos registrados' }}</div>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>

@@ -1,0 +1,103 @@
+<div class="client-portal-container">
+    <div class="loading-shade" *ngIf="isLoading">
+      <mat-spinner diameter="50"></mat-spinner>
+    </div>
+  
+    <div class="error-message" *ngIf="errorMessage">
+      {{ errorMessage }}
+    </div>
+  
+    <ng-container *ngIf="client && !isLoading">
+      <div class="welcome-section">
+        <h1>Bienvenido, {{ client.name }}</h1>
+        <div class="client-status">
+          <span class="status-badge" [ngClass]="{
+            'active': client.status === 'ACTIVE',
+            'suspended': client.status === 'SUSPENDED',
+            'disconnected': client.status === 'DISCONNECTED'
+          }">
+            {{ client.status === 'ACTIVE' ? 'Servicio Activo' : 
+               client.status === 'SUSPENDED' ? 'Servicio Suspendido' : 'Servicio Desconectado' }}
+          </span>
+        </div>
+      </div>
+  
+      <div class="dashboard-cards">
+        <mat-card>
+          <mat-card-header>
+            <mat-card-title>Mi Plan</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="plan-info">
+              <div class="plan-name">{{ client.servicePlan.name }}</div>
+              <div class="plan-details">
+                <div class="detail-item">
+                  <span class="label">Velocidad:</span>
+                  <span class="value">{{ client.servicePlan.downloadSpeed }}/{{ client.servicePlan.uploadSpeed }}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="label">Precio:</span>
+                  <span class="value">{{ client.servicePlan.price | currency }}</span>
+                </div>
+                <div class="detail-item" *ngIf="client.servicePlan.dataCapGB">
+                  <span class="label">Límite de datos:</span>
+                  <span class="value">{{ client.servicePlan.dataCapGB }} GB</span>
+                </div>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+  
+        <mat-card>
+          <mat-card-header>
+            <mat-card-title>Conexión</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="connection-info">
+              <div class="detail-item">
+                <span class="label">IP:</span>
+                <span class="value">{{ client.ipAddress }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="label">Tipo de conexión:</span>
+                <span class="value">
+                  {{ client.connectionType === 'SIMPLE_QUEUE' ? 'Simple Queue' : 
+                     client.connectionType === 'PCQ' ? 'PCQ' :
+                     client.connectionType === 'HOTSPOT' ? 'Hotspot' : 
+                     client.connectionType === 'PPPOE' ? 'PPPoE' : 
+                     client.connectionType }}
+                </span>
+              </div>
+              <div class="detail-item">
+                <span class="label">Router:</span>
+                <span class="value">{{ client.router.name }}</span>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+  
+        <mat-card>
+          <mat-card-header>
+            <mat-card-title>Soporte</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <p>Si tienes problemas con tu servicio, puedes contactarnos a través de:</p>
+            <div class="support-options">
+              <div class="support-option">
+                <mat-icon>phone</mat-icon>
+                <span>Teléfono: (123) 456-7890</span>
+              </div>
+              <div class="support-option">
+                <mat-icon>email</mat-icon>
+                <span>Email: soporte@dinabyte.com</span>
+              </div>
+              <div class="support-option">
+                <mat-icon>whatsapp</mat-icon>
+                <span>WhatsApp: +52 123 456 7890</span>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </ng-container>
+  </div>

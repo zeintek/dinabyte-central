@@ -1,0 +1,45 @@
+.routers-container {
+    padding: 20px;
+    
+    .header-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      
+      h1 {
+        margin: 0;
+      }
+    }
+    
+    .full-width {
+      width: 100%;
+    }
+    
+    .table-container {
+      position: relative;
+      min-height: 200px;
+      
+      mat-progress-spinner {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+    }
+    
+    .status-active {
+      color: #4caf50;
+      font-weight: 500;
+    }
+    
+    .status-inactive {
+      color: #f44336;
+      font-weight: 500;
+    }
+    
+    .status-maintenance {
+      color: #ff9800;
+      font-weight: 500;
+    }
+  }
