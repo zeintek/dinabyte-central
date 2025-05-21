@@ -1,0 +1,28 @@
+<!-- src/app/shared/main-layout/sidebar/sidebar.component.html -->
+<div class="sidebar">
+    <div class="sidebar-menu">
+      <ng-container *ngFor="let item of menuItems">
+        <!-- Elemento principal del menú -->
+        <div class="menu-item" 
+             [class.active]="item.expanded" 
+             [routerLink]="item.children ? null : item.route" 
+             (click)="item.children ? toggleExpand(item) : null">
+          <div class="menu-item-content">
+            <i class="menu-icon material-icons">{{item.icon}}</i>
+            <span class="menu-title">{{item.title}}</span>
+            <i *ngIf="item.children" class="material-icons expand-icon" [class.expanded]="item.expanded">
+              keyboard_arrow_down
+            </i>
+          </div>
+        </div>
+        
+        <!-- Submenú, si existe -->
+        <div class="submenu" *ngIf="item.children" [class.expanded]="item.expanded">
+          <div class="submenu-item" *ngFor="let child of item.children" [routerLink]="child.route">
+            <span class="submenu-title">{{child.title}}</span>
+            <span *ngIf="child.badge" class="badge">{{child.badge}}</span>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </div>

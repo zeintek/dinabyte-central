@@ -48,6 +48,7 @@ import { ErrorInterceptor } from './core/interceptors/error.interceptor';
 
 // Módulos de gráficos
 import { NgChartsModule } from 'ng2-charts';
+import { BillingModule } from './admin/billing/billing.module';
 
 @NgModule({
   declarations: [
@@ -92,7 +93,8 @@ import { NgChartsModule } from 'ng2-charts';
     MatTooltipModule,
     MatCheckboxModule,
     MatTabsModule,
-    NgChartsModule
+    NgChartsModule,
+    BillingModule
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },

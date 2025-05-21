@@ -2,9 +2,26 @@ import { Component, OnInit } from '@angular/core';
 import { ClientService } from '../core/services/client.service';
 import { AuthService } from '../core/services/auth.service';
 import { Client } from '../shared/models/client.model';
+import { MatButtonModule } from '@angular/material/button'; // Importa el módulo del botón
+import { MatCardModule } from '@angular/material/card'; // Importa el módulo de la tarjeta
+import { MatInputModule } from '@angular/material/input'; // Importa el módulo de input
+import { MatFormFieldModule } from '@angular/material/form-field'; // Importa el módulo de form field
+import { FormsModule } from '@angular/forms'; // Necesario para ngModel
+import { CommonModule } from '@angular/common';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+
 
 @Component({
   selector: 'app-client-portal',
+  standalone: true,
+  imports: [
+    MatButtonModule,
+    MatCardModule,
+    MatFormFieldModule,
+    MatInputModule,
+    FormsModule,CommonModule, MatIconModule, MatProgressSpinnerModule
+  ],
   templateUrl: './client-portal.component.html',
   styleUrls: ['./client-portal.component.scss']
 })

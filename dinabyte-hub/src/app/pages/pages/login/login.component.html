@@ -1,0 +1,88 @@
+<div class="main-content">
+  <div class="container">
+    <div class="col-md-4 ml-auto mr-auto">
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <div class="card card-login card-plain">
+          <div class="card-header">
+            <div class="logo-container">
+              <img src="assets/img/now-logo.png" alt="Logo" />
+            </div>
+          </div>
+          <div class="card-body">
+            <!-- Campo de usuario -->
+            <div
+              class="input-group no-border form-control-lg"
+              [ngClass]="{ 'input-group-focus': focus === true }"
+            >
+              <span class="input-group-prepend">
+                <div class="input-group-text">
+                  <i class="now-ui-icons users_circle-08"></i>
+                </div>
+              </span>
+              <input
+                formControlName="username"
+                type="text"
+                class="form-control"
+                placeholder="Usuario..."
+                (focus)="focus = true"
+                (blur)="focus = false"
+                required
+              />
+              <!-- Mostrar error si el campo es obligatorio -->
+              <div *ngIf="f.username.touched && f.username.invalid" class="text-danger">
+                <small *ngIf="f.username.errors?.required">El usuario es obligatorio.</small>
+              </div>
+            </div>
+
+            <!-- Campo de contraseña -->
+            <div
+              class="input-group no-border form-control-lg"
+              [ngClass]="{ 'input-group-focus': focus2 === true }"
+            >
+              <div class="input-group-prepend">
+                <div class="input-group-text">
+                  <i class="now-ui-icons text_caps-small"></i>
+                </div>
+              </div>
+              <input
+                formControlName="password"
+                type="password"
+                class="form-control"
+                placeholder="Contraseña..."
+                (focus)="focus2 = true"
+                (blur)="focus2 = false"
+                required
+              />
+              <!-- Mostrar error si el campo es obligatorio -->
+              <div *ngIf="f.password.touched && f.password.invalid" class="text-danger">
+                <small *ngIf="f.password.errors?.required">La contraseña es obligatoria.</small>
+              </div>
+            </div>
+
+            <!-- Mostrar mensaje de error del servidor -->
+            <div *ngIf="errorMessage" class="alert alert-danger mt-3">
+              {{ errorMessage }}
+            </div>
+          </div>
+          <div class="card-footer">
+            <button
+              type="submit"
+              class="btn btn-primary btn-round btn-lg btn-block mb-3"
+              [disabled]="isLoading || loginForm.invalid"
+            >
+              {{ isLoading ? 'Cargando...' : 'Iniciar Sesión' }}
+            </button>
+            <div class="pull-left">
+              <h6>
+                <a [routerLink]="['/register']" class="link footer-link">Crear cuenta</a>
+              </h6>
+            </div>
+            <div class="pull-right">
+              <h6><a href="#pablo" class="link footer-link">¿Ayuda?</a></h6>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

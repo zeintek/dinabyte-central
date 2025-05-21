@@ -1,11 +1,17 @@
+// src/app/shared/main-layout/main-layout.component.ts
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
+import { Router } from '@angular/router';
+import { SidebarComponent } from './sidebar/sidebar.component';
 
 @Component({
   selector: 'app-main-layout',
   templateUrl: './main-layout.component.html',
-  styleUrls: ['./main-layout.component.scss']
+  styleUrls: ['./main-layout.component.scss'],
+  standalone: true,
+  imports: [CommonModule, RouterModule, SidebarComponent]
 })
 export class MainLayoutComponent implements OnInit {
   user: any;

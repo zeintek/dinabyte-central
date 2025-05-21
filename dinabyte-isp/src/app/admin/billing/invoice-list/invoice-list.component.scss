@@ -1,0 +1,52 @@
+/* src/app/admin/billing/invoice-list/invoice-list.component.scss */
+.container {
+    padding: 20px;
+    
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      
+      h1 {
+        margin: 0;
+      }
+      
+      .actions {
+        display: flex;
+        gap: 16px;
+        align-items: center;
+      }
+    }
+    
+    .mat-elevation-z8 {
+      overflow: auto;
+    }
+    
+    .status-badge {
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    
+    .status-paid {
+      background-color: #e6f7e6;
+      color: #43a047;
+    }
+    
+    .status-pending {
+      background-color: #fff8e1;
+      color: #ff8f00;
+    }
+    
+    .status-overdue {
+      background-color: #ffebee;
+      color: #e53935;
+    }
+    
+    .status-cancelled {
+      background-color: #eeeeee;
+      color: #757575;
+    }
+  }

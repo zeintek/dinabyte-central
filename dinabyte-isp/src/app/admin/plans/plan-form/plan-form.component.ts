@@ -1,11 +1,32 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { PlanService } from '../../../core/services/plan.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatButtonModule } from '@angular/material/button'; // Importa el módulo del botón
+import { MatCardModule } from '@angular/material/card'; // Importa el módulo de la tarjeta
+import { MatInputModule } from '@angular/material/input'; // Importa el módulo de input
+import { MatFormFieldModule } from '@angular/material/form-field'; // Importa el módulo de form field
+import { FormsModule, ReactiveFormsModule } from '@angular/forms'; // Necesario para ngModel
+import { CommonModule } from '@angular/common';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatTableModule } from '@angular/material/table';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 @Component({
   selector: 'app-plan-form',
+  standalone: true,
+    imports: [
+      MatButtonModule,
+      MatCardModule,
+      MatFormFieldModule,
+      MatInputModule,
+      FormsModule,CommonModule, MatIconModule, MatProgressSpinnerModule,
+      RouterModule, // Agrega RouterModule para routerLink
+      MatTableModule,ReactiveFormsModule, // Para formControlName
+      MatSlideToggleModule
+    ],
   templateUrl: './plan-form.component.html',
   styleUrls: ['./plan-form.component.scss']
 })

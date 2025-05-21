@@ -5,9 +5,38 @@ import { Router } from '@angular/router';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
-
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatTableModule } from '@angular/material/table';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatSelectModule } from '@angular/material/select';
+import { RouterModule } from '@angular/router';
+import { NgChartsModule } from 'ng2-charts'; // Importa ng2-charts para baseChart
 @Component({
   selector: 'app-client-list',
+  standalone: true,
+    imports: [
+      CommonModule,
+      RouterModule,
+      MatButtonModule,
+      MatCardModule,
+      MatFormFieldModule,
+      MatInputModule,
+      FormsModule,
+      ReactiveFormsModule,
+      MatIconModule,
+      MatProgressSpinnerModule,
+      MatTableModule,
+      MatSlideToggleModule,
+      MatSelectModule,
+      NgChartsModule // Agrega NgChartsModule para baseChart
+    ],
   templateUrl: './client-list.component.html',
   styleUrls: ['./client-list.component.scss']
 })

@@ -1,128 +1,132 @@
 import { Component, OnInit } from '@angular/core';
+import { InvoiceService } from '../../core/services/invoice.service';
 import { ClientService } from '../../core/services/client.service';
-import { PlanService } from '../../core/services/plan.service';
-import { MikrotikService } from '../../core/services/mikrotik.service';
-import { forkJoin } from 'rxjs';
+import { InvoiceStatus } from '../../shared/models/invoice.model';
+import { CommonModule, CurrencyPipe } from '@angular/common';
+import { RouterModule } from '@angular/router';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatButtonModule } from '@angular/material/button';
+import { NgChartsModule } from 'ng2-charts';
 
-interface ChartItem {
-  name: string;
-  count: number;
-}
+import {
+  ChartData
+} from 'chart.js';
 
 @Component({
   selector: 'app-dashboard',
+  standalone: true,
+  imports: [
+    CommonModule,
+    RouterModule,
+    MatIconModule,
+    MatProgressSpinnerModule,
+    MatButtonModule,
+    NgChartsModule
+  ],
+  providers: [CurrencyPipe],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit {
   totalClients = 0;
   activeClients = 0;
-  suspendedClients = 0;
-  totalRouters = 0;
-  connectedRouters = 0;
-  disconnectedRouters = 0;
-  totalPlans = 0;
-  
-  clientsByPlan: ChartItem[] = [];
-  clientsByConnectionType: ChartItem[] = [];
-  
-  isLoading = true;
-  
+  totalInvoices = 0;
+  pendingInvoices = 0;
+  totalRevenue = 0;
+  loading = true;
+
+  invoiceChartData: ChartData<'doughnut', number[], string> = {
+    labels: [],
+    datasets: []
+  };
+
+  invoiceChartOptions = {
+    responsive: true,
+    maintainAspectRatio: false
+  };
+
+  revenueChartData: ChartData<'line', (number | null)[], string> = {
+    labels: [],
+    datasets: []
+  };
+
+  revenueChartOptions = {
+    responsive: true,
+    maintainAspectRatio: false
+  };
+
+  invoiceChartLabels = ['Pagadas', 'Pendientes', 'Vencidas', 'Canceladas'];
+  revenueChartLabels: string[] = [];
+
   constructor(
-    private clientService: ClientService,
-    private planService: PlanService,
-    private mikrotikService: MikrotikService
-  ) { }
-  
+    private invoiceService: InvoiceService,
+    private clientService: ClientService
+  ) {}
+
   ngOnInit(): void {
     this.loadDashboardData();
   }
-  
+
   loadDashboardData(): void {
-    this.isLoading = true;
-    
-    forkJoin({
-      clients: this.clientService.getClients(),
-      plans: this.planService.getPlans(),
-      routers: this.mikrotikService.getRouters()
-    }).subscribe(
-      results => {
-        const { clients, plans, routers } = results;
-        
-        // Process client statistics
-        this.totalClients = clients.length;
-        this.activeClients = clients.filter(c => c.status === 'ACTIVE').length;
-        this.suspendedClients = clients.filter(c => c.status === 'SUSPENDED').length;
-        
-        // Process router statistics
-        this.totalRouters = routers.length;
-        this.connectedRouters = routers.filter(r => r.status === 'ACTIVE').length;
-        this.disconnectedRouters = routers.filter(r => r.status !== 'ACTIVE').length;
-        
-        // Process plan statistics
-        this.totalPlans = plans.length;
-        
-        // Calculate clients by plan
-        this.clientsByPlan = this.calculateClientsByPlan(clients, plans);
-        
-        // Calculate clients by connection type
-        this.clientsByConnectionType = this.calculateClientsByConnectionType(clients);
-        
-        this.isLoading = false;
-      },
-      error => {
-        console.error('Error loading dashboard data:', error);
-        this.isLoading = false;
-      }
-    );
-  }
-  
-  calculateClientsByPlan(clients: any[], plans: any[]): ChartItem[] {
-    // Create a map of plan ids to names
-    const planMap: {[key: string]: string} = {};
-    plans.forEach(plan => {
-      planMap[plan.id] = plan.name;
+    this.loading = true;
+
+    this.clientService.getClients().subscribe(clients => {
+      this.totalClients = clients.length;
+      this.activeClients = clients.filter(c => c.status === 'ACTIVE').length;
     });
-    
-    // Group clients by plan
-    const planGroups: {[key: string]: ChartItem} = {};
-    clients.forEach(client => {
-      const planId = client.servicePlan.id;
-      if (!planGroups[planId]) {
-        planGroups[planId] = {
-          name: planMap[planId],
-          count: 0
-        };
-      }
-      planGroups[planId].count++;
+
+    this.invoiceService.getAllInvoices().subscribe(invoices => {
+      this.totalInvoices = invoices.length;
+      this.pendingInvoices = invoices.filter(i => i.status === InvoiceStatus.PENDING).length;
+
+      this.totalRevenue = invoices
+        .filter(i => i.status === InvoiceStatus.PAID)
+        .reduce((sum, invoice) => sum + invoice.total, 0);
+
+      const paidCount = invoices.filter(i => i.status === InvoiceStatus.PAID).length;
+      const pendingCount = invoices.filter(i => i.status === InvoiceStatus.PENDING).length;
+      const overdueCount = invoices.filter(i => i.status === InvoiceStatus.OVERDUE).length;
+      const cancelledCount = invoices.filter(i => i.status === InvoiceStatus.CANCELLED).length;
+
+      this.invoiceChartData = {
+        labels: this.invoiceChartLabels,
+        datasets: [{
+          data: [paidCount, pendingCount, overdueCount, cancelledCount],
+          label: 'Facturas por Estado',
+          backgroundColor: ['#4CAF50', '#FFC107', '#F44336', '#9E9E9E']
+        }]
+      };
+
+      const revenueByMonth = new Map<string, number>();
+
+      invoices
+        .filter(i => i.status === InvoiceStatus.PAID)
+        .forEach(invoice => {
+          const date = new Date(invoice.issueDate);
+          const monthYear = `${date.getMonth() + 1}/${date.getFullYear()}`;
+
+          if (revenueByMonth.has(monthYear)) {
+            revenueByMonth.set(monthYear, revenueByMonth.get(monthYear)! + invoice.total);
+          } else {
+            revenueByMonth.set(monthYear, invoice.total);
+          }
+        });
+
+      this.revenueChartLabels = Array.from(revenueByMonth.keys());
+      this.revenueChartData = {
+        labels: this.revenueChartLabels,
+        datasets: [{
+          data: Array.from(revenueByMonth.values()),
+          label: 'Ingresos Mensuales',
+          borderColor: '#3F51B5',
+          backgroundColor: 'rgba(63, 81, 181, 0.2)',
+          fill: true,
+          tension: 0.4
+        }]
+      };
+
+      this.loading = false;
     });
-    
-    // Convert to array for chart
-    return Object.values(planGroups);
-  }
-  
-  calculateClientsByConnectionType(clients: any[]): ChartItem[] {
-    const typeLabels: {[key: string]: string} = {
-      'SIMPLE_QUEUE': 'Simple Queue',
-      'PCQ': 'PCQ',
-      'HOTSPOT': 'Hotspot',
-      'PPPOE': 'PPPoE'
-    };
-    
-    // Group clients by connection type
-    const typeGroups: {[key: string]: ChartItem} = {};
-    clients.forEach(client => {
-      const type = client.connectionType;
-      if (!typeGroups[type]) {
-        typeGroups[type] = {
-          name: typeLabels[type] || type,
-          count: 0
-        };
-      }
-      typeGroups[type].count++;
-    });
-    
-    // Convert to array for chart
-    return Object.values(typeGroups);
   }
 }

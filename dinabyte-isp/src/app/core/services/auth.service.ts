@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
+import { StorageService } from './storage.service';
 
 const AUTH_API = 'http://localhost:8080/api/auth/';
 
@@ -17,7 +18,10 @@ interface AuthResponse {
   providedIn: 'root'
 })
 export class AuthService {
-  constructor(private http: HttpClient) { }
+  constructor(
+    private http: HttpClient,
+    private storageService: StorageService
+  ) { }
 
   login(username: string, password: string): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(AUTH_API + 'signin', {
@@ -45,11 +49,18 @@ export class AuthService {
   }
 
   saveToken(token: string): void {
-    localStorage.setItem('auth-token', token);
+    this.storageService.setItem('auth-token', token);
   }
 
   getToken(): string | null {
-    return localStorage.getItem('auth-token');
+    if (typeof localStorage !== 'undefined') {
+      return this.storageService.getItem('auth-token');
+    }
+    return null;
+  }
+
+  removeToken(): void {
+    this.storageService.removeItem('auth-token');
   }
 
   saveUser(user: any): void {
@@ -65,8 +76,10 @@ export class AuthService {
   }
 
   isLoggedIn(): boolean {
-    const token = this.getToken();
-    return !!token;
+    if (typeof localStorage !== 'undefined') {
+      return !!this.getToken();
+    }
+    return false;
   }
 
   hasRole(role: string): boolean {
@@ -76,4 +89,5 @@ export class AuthService {
     }
     return false;
   }
+  
 }

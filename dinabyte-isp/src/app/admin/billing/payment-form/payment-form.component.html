@@ -1,0 +1,59 @@
+<!-- src/app/admin/billing/payment-form/payment-form.component.html -->
+<div class="payment-form-container">
+    <h2 mat-dialog-title>Register Payment</h2>
+    
+    <mat-dialog-content>
+      <form [formGroup]="paymentForm">
+        <div class="form-info">
+          <p><strong>Client:</strong> {{data.clientName}}</p>
+          <p *ngIf="data.invoiceNumber"><strong>Invoice:</strong> {{data.invoiceNumber}}</p>
+        </div>
+        
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Amount</mat-label>
+          <input matInput type="number" min="0.01" step="0.01" formControlName="amount">
+          <span matPrefix>$&nbsp;</span>
+          <mat-error *ngIf="paymentForm.get('amount')?.hasError('required')">
+            Amount is required
+          </mat-error>
+          <mat-error *ngIf="paymentForm.get('amount')?.hasError('min')">
+            Amount must be greater than 0
+          </mat-error>
+        </mat-form-field>
+        
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Payment Date</mat-label>
+          <input matInput [matDatepicker]="picker" formControlName="paymentDate">
+          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+          <mat-error *ngIf="paymentForm.get('paymentDate')?.hasError('required')">
+            Payment date is required
+          </mat-error>
+        </mat-form-field>
+        
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Payment Method</mat-label>
+          <mat-select formControlName="paymentMethod">
+            <mat-option *ngFor="let method of paymentMethods" [value]="method">
+              {{method}}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="paymentForm.get('paymentMethod')?.hasError('required')">
+            Payment method is required
+          </mat-error>
+        </mat-form-field>
+        
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Transaction Reference</mat-label>
+          <input matInput formControlName="transactionReference" placeholder="Receipt number, transaction ID, etc.">
+        </mat-form-field>
+      </form>
+    </mat-dialog-content>
+    
+    <mat-dialog-actions align="end">
+      <button mat-button (click)="onCancel()">Cancel</button>
+      <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="paymentForm.invalid">
+        Register Payment
+      </button>
+    </mat-dialog-actions>
+  </div>

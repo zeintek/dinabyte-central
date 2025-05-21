@@ -1,0 +1,120 @@
+<!-- src/app/admin/billing/billing-configuration/billing-configuration.component.html -->
+<div class="container">
+    <h1>Billing Configuration</h1>
+    
+    <div class="config-form-card">
+      <h2>Client Billing Settings</h2>
+      
+      <form [formGroup]="configForm" (ngSubmit)="onSubmit()">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Select Client</mat-label>
+          <mat-select formControlName="clientId" (selectionChange)="onClientSelect($event)">
+            <mat-option *ngFor="let client of clients" [value]="client.id">
+              {{client.name}}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="configForm.get('clientId')?.hasError('required')">
+            Client is required
+          </mat-error>
+        </mat-form-field>
+        
+        <div class="row" *ngIf="selectedClientId">
+          <div class="col">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Billing Day (1-28)</mat-label>
+              <input matInput type="number" min="1" max="28" formControlName="billingDay">
+              <mat-hint>Day of the month when invoices are generated</mat-hint>
+              <mat-error *ngIf="configForm.get('billingDay')?.hasError('required')">
+                Billing day is required
+              </mat-error>
+              <mat-error *ngIf="configForm.get('billingDay')?.hasError('min') || configForm.get('billingDay')?.hasError('max')">
+                Billing day must be between 1 and 28
+              </mat-error>
+            </mat-form-field>
+          </div>
+          
+          <div class="col">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Payment Due Days</mat-label>
+              <input matInput type="number" min="1" formControlName="dueDays">
+              <mat-hint>Days after invoice issue date for payment</mat-hint>
+              <mat-error *ngIf="configForm.get('dueDays')?.hasError('required')">
+                Due days is required
+              </mat-error>
+              <mat-error *ngIf="configForm.get('dueDays')?.hasError('min')">
+                Due days must be at least 1
+              </mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+        
+        <div class="row" *ngIf="selectedClientId">
+          <div class="col">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Preferred Payment Method</mat-label>
+              <mat-select formControlName="preferredPaymentMethod">
+                <mat-option *ngFor="let method of paymentMethods" [value]="method">
+                  {{method}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          
+          <div class="col auto-suspend-col">
+            <mat-slide-toggle formControlName="autoSuspend" color="primary">
+              Auto-Suspend After Due Date
+            </mat-slide-toggle>
+            
+            <mat-form-field appearance="outline" class="full-width" *ngIf="configForm.get('autoSuspend')?.value">
+              <mat-label>Days After Due Date to Suspend</mat-label>
+              <input matInput type="number" min="1" formControlName="daysToSuspendAfterDue">
+              <mat-error *ngIf="configForm.get('daysToSuspendAfterDue')?.hasError('required')">
+                This field is required
+              </mat-error>
+              <mat-error *ngIf="configForm.get('daysToSuspendAfterDue')?.hasError('min')">
+                Value must be at least 1
+              </mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+        
+        <div class="button-container" *ngIf="selectedClientId">
+          <button type="button" mat-button (click)="resetForm()">Cancel</button>
+          <button type="submit" mat-raised-button color="primary" [disabled]="configForm.invalid">
+            Save Configuration
+          </button>
+        </div>
+      </form>
+    </div>
+    
+    <div class="config-list-card" *ngIf="configurations.length > 0">
+      <h2>Existing Configurations</h2>
+      
+      <table class="config-table">
+        <thead>
+          <tr>
+            <th>Client</th>
+            <th>Billing Day</th>
+            <th>Due Days</th>
+            <th>Auto-Suspend</th>
+            <th>Suspension Days</th>
+            <th>Payment Method</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let config of configurations">
+            <td>{{config.clientName}}</td>
+            <td>{{config.billingDay}}</td>
+            <td>{{config.dueDays}}</td>
+            <td>{{config.autoSuspend ? 'Yes' : 'No'}}</td>
+            <td>{{config.daysToSuspendAfterDue}}</td>
+            <td>{{config.preferredPaymentMethod}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    
+    <div class="loading-container" *ngIf="loading">
+      <mat-spinner></mat-spinner>
+    </div>
+  </div>

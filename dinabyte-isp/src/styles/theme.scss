@@ -1,0 +1,37 @@
+/* src/styles/theme.scss */
+@use '@angular/material' as mat;
+
+// Definir la paleta de colores principal
+$dinabyte-primary: mat.define-palette(mat.$indigo-palette, 700);
+$dinabyte-accent: mat.define-palette(mat.$blue-palette, A200, A100, A400);
+$dinabyte-warn: mat.define-palette(mat.$red-palette);
+
+// Crear el tema
+$dinabyte-theme: mat.define-light-theme((
+  color: (
+    primary: $dinabyte-primary,
+    accent: $dinabyte-accent,
+    warn: $dinabyte-warn,
+  ),
+  typography: mat.define-typography-config(),
+  density: 0,
+));
+
+// Aplicar el tema a los componentes de Angular Material
+@include mat.all-component-themes($dinabyte-theme);
+
+// Variables personalizadas
+:root {
+  --primary-color: #3f51b5;
+  --primary-light: #757de8;
+  --primary-dark: #002984;
+  --accent-color: #536dfe;
+  --warn-color: #f44336;
+  --success-color: #4caf50;
+  --background-color: #f5f5f5;
+  --card-color: #ffffff;
+  --text-color: #212121;
+  --text-secondary: #757575;
+  --border-color: #e0e0e0;
+  --shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}

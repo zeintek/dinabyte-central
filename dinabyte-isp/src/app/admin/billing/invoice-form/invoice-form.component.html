@@ -1,0 +1,177 @@
+<!-- src/app/admin/billing/invoice-form/invoice-form.component.html -->
+<div class="container" *ngIf="!loading">
+    <h1 class="page-title">{{isEditMode ? 'Edit Invoice' : 'Create New Invoice'}}</h1>
+    
+    <form [formGroup]="invoiceForm" (ngSubmit)="onSubmit()">
+      <div class="row">
+        <div class="col">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Client</mat-label>
+            <mat-select formControlName="clientId" [disabled]="isEditMode">
+              <mat-option *ngFor="let client of clients" [value]="client.id">
+                {{client.name}}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="invoiceForm.get('clientId')?.hasError('required')">
+              Client is required
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+      
+      <div class="row">
+        <div class="col">
+          <mat-form-field appearance="outline">
+            <mat-label>Issue Date</mat-label>
+            <input matInput [matDatepicker]="issueDatePicker" formControlName="issueDate">
+            <mat-datepicker-toggle matSuffix [for]="issueDatePicker"></mat-datepicker-toggle>
+            <mat-datepicker #issueDatePicker></mat-datepicker>
+            <mat-error *ngIf="invoiceForm.get('issueDate')?.hasError('required')">
+              Issue date is required
+            </mat-error>
+          </mat-form-field>
+        </div>
+        
+        <div class="col">
+          <mat-form-field appearance="outline">
+            <mat-label>Due Date</mat-label>
+            <input matInput [matDatepicker]="dueDatePicker" formControlName="dueDate">
+            <mat-datepicker-toggle matSuffix [for]="dueDatePicker"></mat-datepicker-toggle>
+            <mat-datepicker #dueDatePicker></mat-datepicker>
+            <mat-error *ngIf="invoiceForm.get('dueDate')?.hasError('required')">
+              Due date is required
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+      
+      <div class="section-title">
+        <h2>Invoice Items</h2>
+        <button type="button" mat-mini-fab color="primary" (click)="addItem()" [disabled]="invoiceForm.disabled">
+          <mat-icon>add</mat-icon>
+        </button>
+      </div>
+      
+      <div class="invoice-items">
+        <div formArrayName="items">
+          <div *ngFor="let item of itemsFormArray.controls; let i = index">
+            <div [formGroupName]="i" class="invoice-item">
+              <div class="row">
+                <div class="col-md-6">
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Description</mat-label>
+                    <input matInput formControlName="description">
+                    <mat-error *ngIf="itemsFormArray.at(i).get('description')?.hasError('required')">
+                      Description is required
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+                
+                <div class="col-md-6">
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Service Plan (Optional)</mat-label>
+                    <mat-select formControlName="servicePlanId" (selectionChange)="onServicePlanChange(i, $event)">
+                      <mat-option [value]="null">None</mat-option>
+                      <mat-option *ngFor="let plan of servicePlans" [value]="plan.id">
+                        {{plan.name}} - {{plan.price | currency}}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+              </div>
+              
+              <div class="row">
+                <div class="col">
+                  <mat-form-field appearance="outline">
+                    <mat-label>Quantity</mat-label>
+                    <input matInput type="number" min="0.01" step="0.01" formControlName="quantity">
+                    <mat-error *ngIf="itemsFormArray.at(i).get('quantity')?.hasError('required')">
+                      Quantity is required
+                    </mat-error>
+                    <mat-error *ngIf="itemsFormArray.at(i).get('quantity')?.hasError('min')">
+                      Quantity must be greater than 0
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+                
+                <div class="col">
+                  <mat-form-field appearance="outline">
+                    <mat-label>Unit Price</mat-label>
+                    <input matInput type="number" min="0.01" step="0.01" formControlName="unitPrice">
+                    <span matPrefix>$ </span>
+                    <mat-error *ngIf="itemsFormArray.at(i).get('unitPrice')?.hasError('required')">
+                      Unit price is required
+                    </mat-error>
+                    <mat-error *ngIf="itemsFormArray.at(i).get('unitPrice')?.hasError('min')">
+                      Unit price must be greater than 0
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+                
+                <div class="col">
+                  <div class="item-total">
+                    <span>Total:</span>
+                    <strong>{{calculateItemTotal(itemsFormArray.at(i)) | currency}}</strong>
+                  </div>
+                </div>
+                
+                <div class="col-auto" *ngIf="itemsFormArray.length > 1 && !invoiceForm.disabled">
+                  <button type="button" mat-icon-button color="warn" (click)="removeItem(i)" class="remove-item-btn">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </div>
+              </div>
+              
+              <div class="row" *ngIf="itemsFormArray.at(i).get('servicePlanId')?.value">
+                <div class="col">
+                  <mat-form-field appearance="outline">
+                    <mat-label>Period Start</mat-label>
+                    <input matInput [matDatepicker]="periodStartPicker" formControlName="periodStart">
+                    <mat-datepicker-toggle matSuffix [for]="periodStartPicker"></mat-datepicker-toggle>
+                    <mat-datepicker #periodStartPicker></mat-datepicker>
+                  </mat-form-field>
+                </div>
+                
+                <div class="col">
+                  <mat-form-field appearance="outline">
+                    <mat-label>Period End</mat-label>
+                    <input matInput [matDatepicker]="periodEndPicker" formControlName="periodEnd">
+                    <mat-datepicker-toggle matSuffix [for]="periodEndPicker"></mat-datepicker-toggle>
+                    <mat-datepicker #periodEndPicker></mat-datepicker>
+                  </mat-form-field>
+                </div>
+              </div>
+              
+              <mat-divider *ngIf="i < itemsFormArray.length - 1"></mat-divider>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="invoice-summary">
+        <div class="summary-row">
+          <span>Subtotal:</span>
+          <span>{{calculateSubtotal() | currency}}</span>
+        </div>
+        <div class="summary-row">
+          <span>Tax (16%):</span>
+          <span>{{calculateTax() | currency}}</span>
+        </div>
+        <div class="summary-row total">
+          <span>Total:</span>
+          <span>{{calculateTotal() | currency}}</span>
+        </div>
+      </div>
+      
+      <div class="actions-container">
+        <button type="button" mat-button (click)="cancel()">Cancel</button>
+        <button type="submit" mat-raised-button color="primary" [disabled]="invoiceForm.invalid || invoiceForm.disabled">
+          {{isEditMode ? 'Update Invoice' : 'Create Invoice'}}
+        </button>
+      </div>
+    </form>
+  </div>
+  
+  <div class="loading-container" *ngIf="loading">
+    <mat-spinner></mat-spinner>
+  </div>

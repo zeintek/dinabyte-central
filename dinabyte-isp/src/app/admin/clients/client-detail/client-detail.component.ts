@@ -4,9 +4,43 @@ import { ClientService } from '../../../core/services/client.service';
 import { Client } from '../../../shared/models/client.model';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { ServicePlan } from '../../../shared/models/service-plan.model';
+import { MikrotikRouter } from '../../../shared/models/mikrotik-router.model';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatTableModule } from '@angular/material/table';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatSelectModule } from '@angular/material/select';
+import { RouterModule } from '@angular/router';
+import { NgChartsModule } from 'ng2-charts';
+import { MatDivider } from '@angular/material/divider';
 
 @Component({
   selector: 'app-client-detail',
+  standalone: true,
+    imports: [
+      CommonModule,
+      RouterModule,
+      MatButtonModule,
+      MatCardModule,
+      MatFormFieldModule,
+      MatInputModule,
+      FormsModule,
+      ReactiveFormsModule,
+      MatIconModule,
+      MatProgressSpinnerModule,
+      MatTableModule,
+      MatSlideToggleModule,
+      MatSelectModule,
+      NgChartsModule, MatDivider
+    ],
   templateUrl: './client-detail.component.html',
   styleUrls: ['./client-detail.component.scss']
 })

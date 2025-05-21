@@ -1,0 +1,87 @@
+<!-- src/app/admin/billing/invoice-list/invoice-list.component.html -->
+<div class="container">
+    <div class="header">
+      <h1>Invoices</h1>
+      <div class="actions">
+        <mat-form-field appearance="outline">
+          <mat-label>Filter</mat-label>
+          <input matInput (keyup)="applyFilter($event)" placeholder="Search invoices">
+          <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+        <button mat-raised-button color="primary" [routerLink]="['/admin/billing/invoices/new']">
+          <mat-icon>add</mat-icon>
+          New Invoice
+        </button>
+      </div>
+    </div>
+  
+    <div class="mat-elevation-z8" *ngIf="!loading; else loadingSpinner">
+      <mat-table [dataSource]="dataSource" matSort>
+        <ng-container matColumnDef="invoiceNumber">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Invoice #</mat-header-cell>
+          <mat-cell *matCellDef="let invoice">{{invoice.invoiceNumber}}</mat-cell>
+        </ng-container>
+  
+        <ng-container matColumnDef="clientName">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Client</mat-header-cell>
+          <mat-cell *matCellDef="let invoice">{{invoice.clientName}}</mat-cell>
+        </ng-container>
+  
+        <ng-container matColumnDef="issueDate">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Issue Date</mat-header-cell>
+          <mat-cell *matCellDef="let invoice">{{invoice.issueDate | date:'mediumDate'}}</mat-cell>
+        </ng-container>
+  
+        <ng-container matColumnDef="dueDate">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Due Date</mat-header-cell>
+          <mat-cell *matCellDef="let invoice">{{invoice.dueDate | date:'mediumDate'}}</mat-cell>
+        </ng-container>
+  
+        <ng-container matColumnDef="total">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Total</mat-header-cell>
+          <mat-cell *matCellDef="let invoice">{{invoice.total | currency}}</mat-cell>
+        </ng-container>
+  
+        <ng-container matColumnDef="status">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Status</mat-header-cell>
+          <mat-cell *matCellDef="let invoice">
+            <span class="status-badge" [ngClass]="getStatusClass(invoice.status)">
+              {{invoice.status}}
+            </span>
+          </mat-cell>
+        </ng-container>
+  
+        <ng-container matColumnDef="actions">
+          <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
+          <mat-cell *matCellDef="let invoice">
+            <button mat-icon-button (click)="viewInvoice(invoice)" matTooltip="View Invoice">
+              <mat-icon>visibility</mat-icon>
+            </button>
+            <button mat-icon-button *ngIf="invoice.status === InvoiceStatus.PENDING || invoice.status === InvoiceStatus.OVERDUE"
+                    (click)="createPayment(invoice)" matTooltip="Register Payment">
+              <mat-icon>payments</mat-icon>
+            </button>
+            <button mat-icon-button *ngIf="invoice.status === InvoiceStatus.PENDING || invoice.status === InvoiceStatus.DRAFT"
+                    (click)="cancelInvoice(invoice)" matTooltip="Cancel Invoice">
+              <mat-icon>cancel</mat-icon>
+            </button>
+          </mat-cell>
+        </ng-container>
+  
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+  
+        <tr class="mat-row" *matNoDataRow>
+          <td class="mat-cell" colspan="7">No data matching the filter</td>
+        </tr>
+      </mat-table>
+  
+      <mat-paginator [pageSizeOptions]="[10, 25, 50, 100]" showFirstLastButtons></mat-paginator>
+    </div>
+  
+    <ng-template #loadingSpinner>
+      <div class="loading-container">
+        <mat-spinner></mat-spinner>
+      </div>
+    </ng-template>
+  </div>

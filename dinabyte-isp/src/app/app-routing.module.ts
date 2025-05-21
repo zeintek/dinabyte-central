@@ -12,6 +12,13 @@ import { RouterListComponent } from './admin/mikrotik/router-list/router-list.co
 import { RouterFormComponent } from './admin/mikrotik/router-form/router-form.component';
 import { ClientPortalComponent } from './client-portal/client-portal.component';
 
+// Componentes del sistema de facturación
+import { InvoiceListComponent } from './admin/billing/invoice-list/invoice-list.component';
+import { InvoiceFormComponent } from './admin/billing/invoice-form/invoice-form.component';
+import { InvoiceDetailComponent } from './admin/billing/invoice-detail/invoice-detail.component';
+import { PaymentListComponent } from './admin/billing/payment-list/payment-list.component';
+import { BillingConfigurationComponent } from './admin/billing/billing-configuration/billing-configuration.component';
+
 import { AuthGuard } from './core/guards/auth.guard';
 import { RoleGuard } from './core/guards/role.guard';
 
@@ -35,7 +42,15 @@ const routes: Routes = [
       { path: 'service-plans/edit/:id', component: PlanFormComponent },
       { path: 'mikrotik/routers', component: RouterListComponent },
       { path: 'mikrotik/routers/new', component: RouterFormComponent },
-      { path: 'mikrotik/routers/edit/:id', component: RouterFormComponent }
+      { path: 'mikrotik/routers/edit/:id', component: RouterFormComponent },
+      
+      // Nuevas rutas del sistema de facturación
+      { path: 'billing/invoices', component: InvoiceListComponent },
+      { path: 'billing/invoices/new', component: InvoiceFormComponent },
+      { path: 'billing/invoices/edit/:id', component: InvoiceFormComponent },
+      { path: 'billing/invoices/view/:id', component: InvoiceDetailComponent },
+      { path: 'billing/payments', component: PaymentListComponent },
+      { path: 'billing/configuration', component: BillingConfigurationComponent }
     ]
   },
   // Rutas del portal de cliente

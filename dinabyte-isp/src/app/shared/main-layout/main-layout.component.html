@@ -1,75 +1,19 @@
-<mat-sidenav-container class="sidenav-container">
-    <mat-sidenav #drawer class="sidenav" fixedInViewport
-        [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
-        [mode]="(isHandset$ | async) ? 'over' : 'side'"
-        [opened]="(isHandset$ | async) === false">
-      <mat-toolbar>
-        <img src="assets/images/logo.png" alt="Dinabyte" class="logo">
-        <span>Dinabyte ISP</span>
-      </mat-toolbar>
-      
-      <mat-nav-list>
-        <ng-container *ngIf="isAdmin">
-          <!-- Menú de Administrador -->
-          <a mat-list-item routerLink="/admin/dashboard" routerLinkActive="active">
-            <mat-icon matListIcon>dashboard</mat-icon>
-            <span>Dashboard</span>
-          </a>
-          
-          <a mat-list-item routerLink="/admin/clients" routerLinkActive="active">
-            <mat-icon matListIcon>people</mat-icon>
-            <span>Clientes</span>
-          </a>
-          
-          <a mat-list-item routerLink="/admin/service-plans" routerLinkActive="active">
-            <mat-icon matListIcon>list_alt</mat-icon>
-            <span>Planes de Servicio</span>
-          </a>
-          
-          <a mat-list-item routerLink="/admin/mikrotik/routers" routerLinkActive="active">
-            <mat-icon matListIcon>router</mat-icon>
-            <span>Routers Mikrotik</span>
-          </a>
-          
-          <mat-divider></mat-divider>
-        </ng-container>
-        
-        <a mat-list-item (click)="logout()">
-          <mat-icon matListIcon>exit_to_app</mat-icon>
-          <span>Cerrar sesión</span>
-        </a>
-      </mat-nav-list>
-    </mat-sidenav>
-    
-    <mat-sidenav-content>
-      <mat-toolbar color="primary">
-        <button
-          type="button"
-          aria-label="Toggle sidenav"
-          mat-icon-button
-          (click)="drawer.toggle()">
-          <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
-        </button>
-        
-        <span>{{ isAdmin ? 'Panel de Administración' : 'Portal de Cliente' }}</span>
-        
-        <span class="toolbar-spacer"></span>
-        
-        <button mat-button [matMenuTriggerFor]="userMenu">
-          <mat-icon>account_circle</mat-icon>
+<!-- src/app/shared/main-layout/main-layout.component.html -->
+<div class="layout-container">
+  <app-sidebar class="sidebar"></app-sidebar>
+  <div class="content">
+    <div class="header">
+      <div class="header-content">
+        <div class="user-info">
           <span>{{ user?.username }}</span>
-        </button>
-        
-        <mat-menu #userMenu="matMenu">
-          <button mat-menu-item (click)="logout()">
-            <mat-icon>exit_to_app</mat-icon>
-            <span>Cerrar sesión</span>
+          <button class="user-menu-btn" (click)="logout()">
+            <i class="material-icons">exit_to_app</i>
           </button>
-        </mat-menu>
-      </mat-toolbar>
-      
-      <div class="content-container">
-        <router-outlet></router-outlet>
+        </div>
       </div>
-    </mat-sidenav-content>
-  </mat-sidenav-container>
+    </div>
+    <div class="main-content">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</div>
